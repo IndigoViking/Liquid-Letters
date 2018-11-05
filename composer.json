@@ -1,0 +1,40 @@
+{
+    "name": "indigoviking/liquid-letters",
+    "description": "Liquid Letters counts words and gives reading times.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "liquid letters"
+    ],
+    "support": {
+        "docs": "https://github.com/IndigoViking/liquid-letters/blob/master/README.md",
+        "issues": "https://github.com/IndigoViking/liquid-letters/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "The Indigo Viking",
+            "homepage": "https://www.theindigoviking.com"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "indigoviking\\liquidletters\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Liquid Letters",
+        "handle": "liquid-letters",
+        "hasCpSettings": false,
+        "hasCpSection": false,
+        "changelogUrl": "https://raw.githubusercontent.com/IndigoViking/liquid-letters/master/CHANGELOG.md",
+        "class": "indigoviking\\liquidletters\\LiquidLetters"
+    }
+}
