@@ -34,6 +34,7 @@ class LiquidLettersTwigExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter('wordCount', [$this, 'wordCount']),
             new \Twig_SimpleFilter('readTime', [$this, 'readTime']),
+            new \Twig_SimpleFilter('toList', [$this, 'toList']),
         ];
     }
     /**
@@ -44,6 +45,7 @@ class LiquidLettersTwigExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('wordCount', [$this, 'wordCount']),
             new \Twig_SimpleFunction('readTime', [$this, 'readTime']),
+            new \Twig_SimpleFunction('toList', [$this, 'toList']),
         ];
     }
     /**
@@ -87,5 +89,29 @@ class LiquidLettersTwigExtension extends \Twig_Extension
 			return 'timing invalid';
 		}
 		return $time;
+	}
+	
+	public function toList($content, $option = false)
+	{
+		$content = strip_tags($content);
+		
+		if ($option == 'ol')
+		{
+			$content = '<ol><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ol>';
+			
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
+		else if ($option == 'li')
+		{
+			$content = '<li>'.str_replace( "\n", "</li><li>", $content ).'</li>';
+			
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
+		else
+		{	
+			$content = '<ul><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ul>';
+		
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
 	}
 }

@@ -8,6 +8,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 - Initial release
 
-## 1.0.5 - 2018-11-03
+## 1.2 - 2018-12-03
 ### Added
 - Added to list Twig filter.
