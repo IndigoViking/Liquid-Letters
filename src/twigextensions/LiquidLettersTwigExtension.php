@@ -2,19 +2,15 @@
 /**
  * Liquid Letters plugin for Craft CMS 3.x
  *
- * Count words, get reading times, and convert text to list items.
+ * Liquid Letters counts words and gives reading times.
  *
  * @link      https://www.theindigoviking.com
  * @copyright Copyright (c) 2018 The Indigo Viking
  */
-
-namespace indigoviking\liquidletters\twigextensions;
-
-use indigoviking\liquidletters\LiquidLetters;
-
-use Craft;
-
-/**
+ namespace indigoviking\liquidletters\twigextensions;
+ use indigoviking\liquidletters\LiquidLetters;
+ use Craft;
+ /**
  * @author    The Indigo Viking
  * @package   LiquidLetters
  * @since     1.0.0
@@ -23,16 +19,14 @@ class LiquidLettersTwigExtension extends \Twig_Extension
 {
     // Public Methods
     // =========================================================================
-
-    /**
+     /**
      * @inheritdoc
      */
     public function getName()
     {
         return 'LiquidLetters';
     }
-
-    /**
+     /**
      * @inheritdoc
      */
     public function getFilters()
@@ -40,7 +34,6 @@ class LiquidLettersTwigExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter('wordCount', [$this, 'wordCount']),
             new \Twig_SimpleFilter('readTime', [$this, 'readTime']),
-			new \Twig_SimpleFilter('toList', [$this, 'toList']),
         ];
     }
     /**
@@ -51,7 +44,6 @@ class LiquidLettersTwigExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('wordCount', [$this, 'wordCount']),
             new \Twig_SimpleFunction('readTime', [$this, 'readTime']),
-            new \Twig_SimpleFunction('toList', [$this, 'toList']),
         ];
     }
     /**
@@ -61,27 +53,23 @@ class LiquidLettersTwigExtension extends \Twig_Extension
      * @param bool $options
      * @return mixed
      */
-    public function explodeIt($content)
-    {
-	    $content = strip_tags($content);
+	public function wordCount($content)
+	{
+		$content = strip_tags($content);
 		$content = str_replace("\n", ' ', $content);
 		$content = preg_replace("/\s+/", ' ', $content);
 		$content = trim($content);
 		$words = explode(' ', $content);
-		
-	    return $words;
-    }
-     
-	public function wordCount($content)
-	{
-		$words = explodeIt($content);
-		
 		return count($words);
 	}
 	
 	public function readTime($content, $timing)
 	{
-		$words = explodeIt($content);
+		$content = strip_tags($content);
+		$content = str_replace("\n", ' ', $content);
+		$content = preg_replace("/\s+/", ' ', $content);
+		$content = trim($content);
+		$words = explode(' ', $content);
 		
 		if ($timing == 'min') {
 			$time = ceil(count($words) / 225);
@@ -99,29 +87,5 @@ class LiquidLettersTwigExtension extends \Twig_Extension
 			return 'timing invalid';
 		}
 		return $time;
-	}
-	
-	public function toList($content, $option = false)
-	{
-		$content = strip_tags($content);
-		
-		if ($option == 'ol')
-		{
-			$content = '<ol><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ol>';
-			
-			return new \Twig_Markup( $content, 'UTF-8' );
-		}
-		else if ($option == 'li')
-		{
-			$content = '<li>'.str_replace( "\n", "</li><li>", $content ).'</li>';
-			
-			return new \Twig_Markup( $content, 'UTF-8' );
-		}
-		else
-		{	
-			$content = '<ul><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ul>';
-		
-			return new \Twig_Markup( $content, 'UTF-8' );
-		}
 	}
 }

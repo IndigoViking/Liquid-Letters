@@ -55,25 +55,3 @@ The `readTime` filter requires a timing parameter of seconds(`sec`), minutes(`mi
 `{{ entry.field | readTime('day')`
 
 The output will be the number of the duration to read. If no timing or an invalid timing is submitted, the filter will return the text `timing invalid`.
-
-## Using To List
-
-` | toList ` will convert a multiline text field (rich text) into an unordered list.
-
-If `{{ entry.field }}` is:
-`<p>The quick brown fox...</p>
-<p>...an oft repeated sententce.</p>
-Much ado about this.`
-
-`{{ entry.field | toList }}` will return:
-`<ul><li>The quick brown fox...</li><li>...an oft repeated sentence.</li><li>Much ado about this.</li></ul>`
-
-|toList accepts 1 parameter to change its output. Passing 'ol' will output a numbered list.
-`{{ entry.field | toList('ol') }}` will return:
-`<ol><li>The quick brown fox...</li><li>...an oft repeated sentence.</li><li>Much ado about this.</li></ol>`
-
-Passing 'li' will only return the list items.
-`{{ entry.field | toList('li') }}` will return:
-`<li>The quick brown fox...</li><li>...an oft repeated sentence.</li><li>Much ado about this.</li>`
-
-Brought to you by [The Indigo Viking](https://www.theindigoviking.com)
