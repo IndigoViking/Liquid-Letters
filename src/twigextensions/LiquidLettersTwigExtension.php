@@ -101,10 +101,27 @@ class LiquidLettersTwigExtension extends \Twig_Extension
 		return $time;
 	}
 	
-	public function toList($content)
+	public function toList($content, $option = false)
 	{
 		$content = strip_tags($content);
 		
-		return '<li>'.str_replace( "\n", "</li><li>", $text ).'</li>';
+		if ($option == 'ol')
+		{
+			$content = '<ol><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ol>';
+			
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
+		else if ($option == 'li')
+		{
+			$content = '<li>'.str_replace( "\n", "</li><li>", $content ).'</li>';
+			
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
+		else
+		{	
+			$content = '<ul><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ul>';
+		
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
 	}
 }
