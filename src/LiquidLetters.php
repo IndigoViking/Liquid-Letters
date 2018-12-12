@@ -2,82 +2,126 @@
 /**
  * Liquid Letters plugin for Craft CMS 3.x
  *
- * Liquid Letters counts words and gives reading times.
+ * Count words, get reading times, and convert text to list items.
  *
  * @link      https://www.theindigoviking.com
  * @copyright Copyright (c) 2018 The Indigo Viking
  */
 
-namespace indigoviking\liquidletters;
+namespace indigoviking\liquidletters\twigextensions;
 
-use indigoviking\liquidletters\twigextensions\LiquidLettersTwigExtension;
+use indigoviking\liquidletters\LiquidLetters;
 
 use Craft;
-use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
-
-use yii\base\Event;
 
 /**
- * Class LiquidLetters
- *
  * @author    The Indigo Viking
  * @package   LiquidLetters
  * @since     1.0.0
- *
  */
-class LiquidLetters extends Plugin
+class LiquidLettersTwigExtension extends \Twig_Extension
 {
-    // Static Properties
-    // =========================================================================
-
-    /**
-     * @var LiquidLetters
-     */
-    public static $plugin;
-
-    // Public Properties
-    // =========================================================================
-
-    /**
-     * @var string
-     */
-    public $schemaVersion = '1.0.0';
-
     // Public Methods
     // =========================================================================
 
     /**
      * @inheritdoc
      */
-    public function init()
+    public function getName()
     {
-        parent::init();
-        self::$plugin = $this;
-
-        Craft::$app->view->registerTwigExtension(new LiquidLettersTwigExtension());
-
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                }
-            }
-        );
-
-        Craft::info(
-            Craft::t(
-                'liquid-letters',
-                '{name} plugin loaded',
-                ['name' => $this->name]
-            ),
-            __METHOD__
-        );
+        return 'LiquidLetters';
     }
 
-    // Protected Methods
-    // =========================================================================
-
+    /**
+     * @inheritdoc
+     */
+    public function getFilters()
+    {
+        return [
+            new \Twig_SimpleFilter('wordCount', [$this, 'wordCount']),
+            new \Twig_SimpleFilter('readTime', [$this, 'readTime']),
+			new \Twig_SimpleFilter('toList', [$this, 'toList']),
+        ];
+    }
+    /**
+     * @inheritdoc
+     */
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction('wordCount', [$this, 'wordCount']),
+            new \Twig_SimpleFunction('readTime', [$this, 'readTime']),
+            new \Twig_SimpleFunction('toList', [$this, 'toList']),
+        ];
+    }
+    /**
+     * php pathinfo() wrapper -- http://php.net/manual/en/function.pathinfo.php
+     *
+     * @param $path
+     * @param bool $options
+     * @return mixed
+     */
+    public function explodeIt($content)
+    {
+	    $content = strip_tags($content);
+		$content = str_replace("\n", ' ', $content);
+		$content = preg_replace("/\s+/", ' ', $content);
+		$content = trim($content);
+		$words = explode(' ', $content);
+		
+	    return $words;
+    }
+     
+	public function wordCount($content)
+	{
+		$words = explodeIt($content);
+		
+		return count($words);
+	}
+	
+	public function readTime($content, $timing)
+	{
+		$words = explodeIt($content);
+		
+		if ($timing == 'min') {
+			$time = ceil(count($words) / 225);
+		}
+		elseif ($timing == 'sec') {
+			$time = ceil(count($words) / 3.75);
+		}
+		elseif ($timing == 'hr') {
+			$time = ceil(count($words) / 13500);
+		}
+		elseif ($timing == 'day') {
+			$time = ceil(count($words) / 324000);
+		}
+		else {
+			return 'timing invalid';
+		}
+		return $time;
+	}
+	
+	public function toList($content, $option = false)
+	{
+		$content = strip_tags($content);
+		
+		if ($option == 'ol')
+		{
+			$content = '<ol><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ol>';
+			
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
+		else if ($option == 'li')
+		{
+			$content = '<li>'.str_replace( "\n", "</li><li>", $content ).'</li>';
+			
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
+		else
+		{	
+			$content = '<ul><li>'.str_replace( "\n", "</li><li>", $content ).'</li></ul>';
+		
+			return new \Twig_Markup( $content, 'UTF-8' );
+		}
+	}
 }

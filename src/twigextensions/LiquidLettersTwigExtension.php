@@ -2,7 +2,7 @@
 /**
  * Liquid Letters plugin for Craft CMS 3.x
  *
- * Liquid Letters counts words and gives reading times.
+ * Count words, get reading times, and convert text to list items.
  *
  * @link      https://www.theindigoviking.com
  * @copyright Copyright (c) 2018 The Indigo Viking
@@ -40,6 +40,7 @@ class LiquidLettersTwigExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter('wordCount', [$this, 'wordCount']),
             new \Twig_SimpleFilter('readTime', [$this, 'readTime']),
+			new \Twig_SimpleFilter('toList', [$this, 'toList']),
         ];
     }
     /**
@@ -50,6 +51,7 @@ class LiquidLettersTwigExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('wordCount', [$this, 'wordCount']),
             new \Twig_SimpleFunction('readTime', [$this, 'readTime']),
+            new \Twig_SimpleFunction('toList', [$this, 'toList']),
         ];
     }
     /**
@@ -59,23 +61,27 @@ class LiquidLettersTwigExtension extends \Twig_Extension
      * @param bool $options
      * @return mixed
      */
-	public function wordCount($content)
-	{
-		$content = strip_tags($content);
+    public function explodeIt($content)
+    {
+	    $content = strip_tags($content);
 		$content = str_replace("\n", ' ', $content);
 		$content = preg_replace("/\s+/", ' ', $content);
 		$content = trim($content);
 		$words = explode(' ', $content);
+		
+	    return $words;
+    }
+     
+	public function wordCount($content)
+	{
+		$words = explodeIt($content);
+		
 		return count($words);
 	}
 	
 	public function readTime($content, $timing)
 	{
-		$content = strip_tags($content);
-		$content = str_replace("\n", ' ', $content);
-		$content = preg_replace("/\s+/", ' ', $content);
-		$content = trim($content);
-		$words = explode(' ', $content);
+		$words = explodeIt($content);
 		
 		if ($timing == 'min') {
 			$time = ceil(count($words) / 225);
@@ -93,5 +99,12 @@ class LiquidLettersTwigExtension extends \Twig_Extension
 			return 'timing invalid';
 		}
 		return $time;
+	}
+	
+	public function toList($content)
+	{
+		$content = strip_tags($content);
+		
+		return '<li>'.str_replace( "\n", "</li><li>", $text ).'</li>';
 	}
 }

@@ -1,8 +1,8 @@
 {
     "name": "indigoviking/liquid-letters",
-    "description": "Liquid Letters counts words and gives reading times.",
+    "description": "Count words, get reading times, and convert text to list items.",
     "type": "craft-plugin",
-    "version": "1.0.0",
+    "version": "1.0.5",
     "keywords": [
         "craft",
         "cms",
